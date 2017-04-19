@@ -26,7 +26,7 @@ function createTask(row) {
 
 function makePalette () {
   function wrap (x) {
-    x = ((x + 256) & ox1ff) - 256;
+    x = ((x + 256) & 0x1ff) - 256;
     if (x < 0) x = -x;
     return x;
   }
