@@ -23,3 +23,52 @@ function createTask(row) {
   };
   return task;
 }
+
+function makePalette () {
+  function wrap (x) {
+    x = ((x + 256) & ox1ff) - 256;
+    if (x < 0) x = -x;
+    return x;
+  }
+  for (var i = 0; i <= max_iter; i++) {
+    palette.push([wrap(7 * i), wrap(5 * i), wrap(11 * 1)]);
+  }
+}
+
+function drawRow(workerResults) {
+  var values = workerResults.values;
+  var pixelData = rowData.data;
+  for (var i = 0; i < rowData.width; i++) {
+    var red = i * 4;
+    var green = i * 4 + 1;
+    var blue = i * 4 + 2;
+    var alpha = i * 4 + 3;
+    pixelData[alpha] = 255;
+    if (values[i] < 0) {
+      pixelData[red] = pixelData[green] = pixelData[blue] = 0;
+    } else {
+      var color = palette[values[i]];
+      pixelData[red] = color[0];
+      pixelData[green] = color[1];
+      pixelData[blue] = color[2];
+    }
+  }
+  ctx.putImageData(rowData, 0, workerResults.row);
+}
+
+function setupGraphics() {
+  canvas = document.getElementById("fractal");
+  ctx = canvas.getContext("2d");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  var width = ((i_max - i_min) * canvas.width / canvas.height);
+  var r_mid = (r_max + r_min) / 2;
+  r_min = r_mid - width / 2;
+  r_max = r_mid + width / 2;
+
+  rowData = ctx.createImageData(canvas.width, 1);
+
+  makePalette();
+}
