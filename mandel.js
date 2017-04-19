@@ -48,7 +48,10 @@ function startWorkers() {
 }
 
 function processWork(worker, workerResults) {
-  drawRow(workerResults);
+  if (workerResults.generation == generation) {
+    drawRow(workerResults);
+  }
+
   reassignWorker(worker);
 }
 
